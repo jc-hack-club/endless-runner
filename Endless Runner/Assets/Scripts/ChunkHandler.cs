@@ -19,16 +19,16 @@ public class ChunkHandler : MonoBehaviour
 
 	public float ChunkScale = 0;
 
-    // Start is called before the first frame update
-    void Start()
-    {
+    	// Start is called before the first frame update
+	void Start()
+    	{
 		ChunkID = 0;
 		ChunkScale = ChunkPrefab.transform.localScale.x;
 	}
-
-    // Update is called once per frame
-    void Update()
-    {
+	
+    	// Update is called once per frame
+    	void Update()
+    	{
 		//TODO: Remove auto moving player
 		PlayerTransform.position = new Vector3(PlayerTransform.position.x, PlayerTransform.position.y, PlayerTransform.position.z + Speed * Time.deltaTime);
 

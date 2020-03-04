@@ -69,6 +69,7 @@
     <Compile Include="Assets\Scripts\Destroyer.cs" />
     <Compile Include="Assets\Scripts\Randomiser.cs" />
     <Compile Include="Assets\Scripts\SimpleCameraController.cs" />
+    <Compile Include="Assets\Scripts\Starfield.cs" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>/Users/liams/endless-runner/Endless Runner/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class RestartButton : MonoBehaviour
- 
+
 {
     public GameObject button;
     // Start is called before the first frame update

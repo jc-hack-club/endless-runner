@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: e6831e7b1f7065747a456e3860276531
 ModelImporter:
-  serializedVersion: 25
+  serializedVersion: 26
   internalIDToNameTable:
   - first:
       74: 9027978877901136708
@@ -318,7 +318,12 @@ ModelImporter:
   - first:
       74: -9063605730170585118
     second: Cylinder.016|Light.001Action
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: No Name
+    second: {fileID: 2100000, guid: e5748ea7193a5a941afaa8217fc914f9, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
@@ -3398,6 +3403,7 @@ ModelImporter:
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1

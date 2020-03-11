@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,14 +21,26 @@ public class ChunkHandler : MonoBehaviour
 
 	//Debug Shit
 	public Text DebugUI;
+	public GameObject DebugFrame;
 	public float Speed = 1f;
+
+	public int Score = 0;
+	private int Highscore;
+
+	public Text ScoreUI;
+	public Text HighscoreUI;
 
 	[HideInInspector]
 	public float ChunkScale = 0;
 
-    // Start is called before the first frame update
-    void Start()
-    {
+	public float SpeedIncreaseFactor = 0.1f;
+	public int avgFrameRate;
+
+	// Start is called before the first frame update
+	void Start()
+	{
+		DebugFrame.SetActive(false);
+		Time.timeScale = 1f;
 		ChunkID = 0;
 		ChunkScale = ChunkPrefab.transform.localScale.x;
 
@@ -35,13 +48,20 @@ public class ChunkHandler : MonoBehaviour
 		for (int i = -RenderDistanceBack; i < RenderDistance + RenderDistanceBack; i++)
 		{
 			ChunkID = i;
-			InstantiateChunk();
+			InstantiateChunk(!(i < RenderDistanceBack / 2));
 		}
+		PlayerTransform.position = new Vector3(PlayerTransform.position.x, PlayerTransform.position.y, 4.5f);
+		GetHighscore();
 	}
 
     // Update is called once per frame
     void Update()
-    {
+	{
+		//FPS counter
+		float current = 0;
+		current = (int)(1f / Time.unscaledDeltaTime);
+		avgFrameRate = (int)current;
+
 		//TODO: Remove auto moving player
 		PlayerTransform.position = new Vector3(PlayerTransform.position.x, PlayerTransform.position.y, PlayerTransform.position.z + Speed * Time.deltaTime);
 
@@ -49,17 +69,43 @@ public class ChunkHandler : MonoBehaviour
 		ChunkID = (PlayerTransform.position.z / (ChunkScale * 2));
 		if ((int)ChunkID > (int)PreviousChunkID)
 		{
-			InstantiateChunk();
+			InstantiateChunk(true);
 			RemoveChunk();
+			Speed += SpeedIncreaseFactor;
 		}
 
-		DebugUI.text = "ChunkID: " + ChunkID;
+		DebugUI.text = avgFrameRate + " FPS\nChunkID: " + ChunkID + "\nSpeed: " + Speed + "\nHighscore: " + Highscore;
+
+		if (Input.GetKeyUp(KeyCode.F3))
+		{
+			DebugFrame.SetActive(!DebugFrame.activeInHierarchy);
+		}
+
+		if (Input.GetKeyUp(KeyCode.F4))
+		{
+			if (PlayerPrefs.HasKey("Highscore"))
+			{
+				PlayerPrefs.DeleteKey("Highscore");
+			}
+		}
+		
+		SpeedIncreaseFactor += Input.GetAxis("brackets") * 0.25f;
 
 		//Remember the previous chunk
 		PreviousChunkID = ChunkID;
+		Score = (int)(ChunkID / 5);
+		ScoreUI.text = "Score: " + Score;
+
+		Highscore = Mathf.Max(Highscore, Score);
+		HighscoreUI.text = "Highscore: " + Highscore;
+
+		if (SpeedIncreaseFactor == 0)
+		{
+			PlayerPrefs.SetInt("Highscore", Highscore);
+		}
 	}
 
-	public void InstantiateChunk()
+	public void InstantiateChunk(bool ObstaclesEnabled)
 	{
 		bool exists = false;
 		Transform[] chunks = ChunkPool.transform.GetComponentsInChildren<Transform>();
@@ -77,6 +123,7 @@ public class ChunkHandler : MonoBehaviour
 			ChunkTmp.name = "Chunk-" + ((int)ChunkID + RenderDistance);
 			ChunkTmp.transform.parent = ChunkPool.transform;
 			ChunkTmp.transform.position = new Vector3(0, 0, ChunkScale * 2 * ((int)ChunkID + 1 + RenderDistance));
+			ChunkTmp.GetComponent<Randomiser>().ObstaclesEnabled = ObstaclesEnabled;
 		}
 	}
 
@@ -90,6 +137,14 @@ public class ChunkHandler : MonoBehaviour
 			{
 				chunks[i].GetComponent<Destroyer>().Remove();
 			}
+		}
+	}
+
+	public void GetHighscore()
+	{
+		if (PlayerPrefs.HasKey("Highscore"))
+		{
+			Highscore = PlayerPrefs.GetInt("Highscore", 0);
 		}
 	}
 }
